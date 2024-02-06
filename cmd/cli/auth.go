@@ -43,8 +43,8 @@ func doAuth() error {
 		exitGracefully(err)
 	}
 
-	if err := copyFileFromTemplate("templates/data/remember_token.go.txt",
-		cel.RootPath+"/data/remember_token.go"); err != nil {
+	if err := copyFileFromTemplate("templates/data/remember-token.go.txt",
+		cel.RootPath+"/data/remember-token.go"); err != nil {
 		exitGracefully(err)
 	}
 
@@ -93,7 +93,7 @@ func doAuth() error {
 		exitGracefully(err)
 	}
 
-	color.Yellow("  - users, tokens, and remember_tokens migrations created and executed")
+	color.Yellow("  - users, tokens, and remember-tokens migrations created and executed")
 	color.Yellow("  - users and token models created")
 	color.Yellow("  - auth middleware created")
 	color.Yellow("")
