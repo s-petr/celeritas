@@ -1,0 +1,84 @@
+{{extends "./layouts/base.jet"}}
+
+{{block browserTitle()}}
+Login
+{{ end }}
+
+{{block css()}} {{ end }}
+
+{{block pageContent()}}
+<h2 class="mt-5 text-center">Login</h2>
+
+<hr />
+
+<form
+  method="post"
+  action="/users/login"
+  name="login-form"
+  id="login-form"
+  class="d-block needs-validation"
+  autocomplete="off"
+  novalidate="">
+  <input type="hidden" name="csrf_token" value="{{.CSRFToken}}" />
+
+  <div class="mb-3">
+    <label for="email" class="form-label">Email</label>
+    <input
+      type="email"
+      class="form-control"
+      id="email"
+      name="email"
+      required=""
+      autocomplete="email-new" />
+  </div>
+
+  <div class="mb-3">
+    <label for="password" class="form-label">Password</label>
+    <input
+      type="password"
+      class="form-control"
+      id="password"
+      name="password"
+      required=""
+      autocomplete="password-new" />
+  </div>
+
+  <div class="form-check form-switch">
+    <input
+      class="form-check-input"
+      type="checkbox"
+      name="remember"
+      value="remember"
+      id="remember" />
+    <label for="remember" class="form-check-label">Remember me</label>
+  </div>
+
+  <hr />
+
+  <button type="submit" class="btn btn-primary">Login</button>
+
+  <p class="mt-2">
+    <small><a href="/users/forgot-password">Forgot password?</a></small>
+  </p>
+</form>
+
+<div class="text-center">
+  <a class="btn btn-outline-secondary" href="/">Back...</a>
+</div>
+
+<p>&nbsp;</p>
+
+{{ end }}
+
+{{block js()}}
+<script>
+  function handleSubmit(e) {
+    e.preventDefault();
+
+    e.target.classList.add('was-validated');
+    e.target.checkValidity() && e.target.submit();
+  }
+
+  document.getElementById('login-form').addEventListener('submit', handleSubmit);
+</script>
+{{ end }}
