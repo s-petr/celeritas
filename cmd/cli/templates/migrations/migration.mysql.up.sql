@@ -1,0 +1,7 @@
+-- CREATE TABLE `some_table` (
+--     `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
+--     `some_field` varchar(255) CHARACTER SET utf8 COLLATE utf8_unicode_ci NOT NULL,
+--     `created_at` timestamp NULL DEFAULT NULL,
+--     `updated_at` timestamp NULL DEFAULT NULL,
+--     PRIMARY KEY (`id`)
+-- ) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4;

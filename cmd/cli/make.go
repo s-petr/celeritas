@@ -2,10 +2,8 @@ package main
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"strings"
-	"time"
 
 	"github.com/fatih/color"
 
@@ -13,32 +11,52 @@ import (
 	"github.com/gertd/go-pluralize"
 )
 
-func doMake(arg2, arg3 string) error {
+func doMake(arg2, arg3, arg4 string) error {
 	switch arg2 {
 	case "key":
 		rnd := cel.RandomString(32)
 		color.Yellow("32 character encryption key: %s", rnd)
 	case "migration":
-		dbType := cel.DB.DataType
+		checkForDB()
+
+		// dbType := cel.DB.DataType
 
 		if arg3 == "" {
 			exitGracefully(errors.New("you need to provide a name for the migration"))
 		}
 
-		fileName := fmt.Sprintf("%d_%s", time.Now().UnixMicro(), arg3)
+		migrationType := "fizz"
+		var up, down string
 
-		upFile := cel.RootPath + "/migrations/" + fileName + "." + dbType + ".up.sql"
-		downFile := cel.RootPath + "/migrations/" + fileName + "." + dbType + ".down.sql"
+		if arg4 == "fizz" || arg4 == "" {
+			upBytes, _ := templateFS.ReadFile("templates/migrations/migration_up.fizz")
+			downBytes, _ := templateFS.ReadFile("templates/migrations/migration_down.fizz")
 
-		if err := copyFileFromTemplate("templates/migrations/migration."+dbType+".up.sql",
-			upFile); err != nil {
+			up = string(upBytes)
+			down = string(downBytes)
+		} else {
+			migrationType = "sql"
+		}
+
+		if err := cel.CreatePopMigration([]byte(up), []byte(down),
+			arg3, migrationType); err != nil {
 			exitGracefully(err)
 		}
 
-		if err := copyFileFromTemplate("templates/migrations/migration."+dbType+".down.sql",
-			downFile); err != nil {
-			exitGracefully(err)
-		}
+		// fileName := fmt.Sprintf("%d_%s", time.Now().UnixMicro(), arg3)
+
+		// upFile := cel.RootPath + "/migrations/" + fileName + "." + dbType + ".up.sql"
+		// downFile := cel.RootPath + "/migrations/" + fileName + "." + dbType + ".down.sql"
+
+		// if err := copyFileFromTemplate("templates/migrations/migration."+dbType+".up.sql",
+		// 	upFile); err != nil {
+		// 	exitGracefully(err)
+		// }
+
+		// if err := copyFileFromTemplate("templates/migrations/migration."+dbType+".down.sql",
+		// 	downFile); err != nil {
+		// 	exitGracefully(err)
+		// }
 	case "auth":
 		if err := doAuth(); err != nil {
 			exitGracefully(err)

@@ -1,21 +1,29 @@
 package main
 
 import (
-	"fmt"
-	"time"
-
 	"github.com/fatih/color"
 )
 
 func doAuth() error {
 	dbType := cel.DB.DataType
-	fmt.Println(dbType)
-	fileName := fmt.Sprintf("%d_create_auth_tables", time.Now().UnixMicro())
-	upFile := cel.RootPath + "/migrations/" + fileName + ".up.sql"
-	downFile := cel.RootPath + "/migrations/" + fileName + ".down.sql"
 
-	if err := copyFileFromTemplate("templates/migrations/auth_tables."+
-		dbType+".sql", upFile); err != nil {
+	tx, err := cel.PopConnect()
+	if err != nil {
+		exitGracefully(err)
+	}
+	defer tx.Close()
+
+	// fileName := fmt.Sprintf("%d_create_auth_tables", time.Now().UnixMicro())
+	// upFile := cel.RootPath + "/migrations/" + fileName + ".up.sql"
+	// downFile := cel.RootPath + "/migrations/" + fileName + ".down.sql"
+
+	// if err := copyFileFromTemplate("templates/migrations/auth_tables."+
+	// 	dbType+".sql", upFile); err != nil {
+	// 	exitGracefully(err)
+	// }
+
+	upBytes, err := templateFS.ReadFile("templates/migrations/auth_tables." + dbType + ".sql")
+	if err != nil {
 		exitGracefully(err)
 	}
 
@@ -25,11 +33,21 @@ func doAuth() error {
 	DROP TABLE IF EXISTS remember_tokens CASCADE;
 	`
 
-	if err := copyDataToFile([]byte(stmt), downFile); err != nil {
+	downBytes := []byte(stmt)
+
+	if err := cel.CreatePopMigration(upBytes, downBytes, "auth", "sql"); err != nil {
 		exitGracefully(err)
 	}
 
-	if err := doMigrate("up", ""); err != nil {
+	// if err := copyDataToFile([]byte(stmt), downFile); err != nil {
+	// 	exitGracefully(err)
+	// }
+
+	// if err := doMigrate("up", ""); err != nil {
+	// 	exitGracefully(err)
+	// }
+
+	if err := cel.RunPopMigrations(tx); err != nil {
 		exitGracefully(err)
 	}
 

@@ -85,8 +85,14 @@ func doNew(appName string) {
 	os.Chdir("./" + appName)
 	updateSource()
 
+	color.Yellow("  Getting latest version of Celeritas repository...")
+	cmd := exec.Command("go", "get", "github.com/s-petr/celeritas")
+	if err := cmd.Start(); err != nil {
+		exitGracefully(err)
+	}
+
 	color.Yellow("  Running go mod tidy...")
-	cmd := exec.Command("go", "mod", "tidy")
+	cmd = exec.Command("go", "mod", "tidy")
 	if err := cmd.Start(); err != nil {
 		exitGracefully(err)
 	}
