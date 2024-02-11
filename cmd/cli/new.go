@@ -86,7 +86,7 @@ func doNew(appName string) {
 	updateSource()
 
 	color.Yellow("  Getting latest version of Celeritas repository...")
-	cmd := exec.Command("go", "get", "github.com/s-petr/celeritas")
+	cmd := exec.Command("go", "get", "github.com/s-petr/celeritas@2.0.0")
 	if err := cmd.Start(); err != nil {
 		exitGracefully(err)
 	}
